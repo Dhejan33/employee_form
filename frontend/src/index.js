@@ -2,12 +2,19 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
+import { BrowserRouter, Routes, Route } from 'react-router-dom'; // Import the necessary components
 import EmployeeForm from './EmployeeForm';
+import EmployeeList from './EmployeeList';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <EmployeeForm />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<EmployeeForm />} />
+        <Route path="/employees" element={<EmployeeList />} />
+      </Routes>
+    </BrowserRouter>
   </React.StrictMode>
 );
 

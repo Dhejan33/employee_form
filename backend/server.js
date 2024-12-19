@@ -55,7 +55,6 @@ db.connect((err) => {
 });
 
 // POST endpoint to handle form submission
-// POST endpoint to handle form submission
 app.post("/submit-form", (req, res) => {
   const {
     firstname,
@@ -102,6 +101,101 @@ app.post("/submit-form", (req, res) => {
     );
   });
 });
+
+// GET endpoint to fetch all employees
+// GET endpoint to fetch all employees
+app.get("/api/employees", (req, res) => {
+  const query = "SELECT * FROM employee_details";
+
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error("Error fetching data:", err.message);
+      return res.status(500).json({ message: "Database error", error: err.message });
+    }
+
+    // Format the `dateOfJoining` field to dd-mm-yyyy or yyyy-mm-dd
+    const formattedResult = result.map((employee) => {
+      const dateOfJoining = new Date(employee.dateOfJoining);
+      const formattedDate = dateOfJoining.toISOString().split('T')[0]; // Format as yyyy-mm-dd
+
+      return {
+        ...employee,
+        dateOfJoining: formattedDate,
+      };
+    });
+
+    res.status(200).json(formattedResult); // Return the result with formatted date
+  });
+});
+
+
+// DELETE endpoint to delete an employee
+app.delete('/api/employees/:id', (req, res) => {
+  const employeeId = req.params.id;
+  const query = 'DELETE FROM employee_details WHERE id = ?'; // Use the correct table name
+
+  db.query(query, [employeeId], (error, results) => {  // Use `db.query` here
+    if (error) {
+      console.error("Error deleting employee:", error.message);
+      return res.status(500).send({ message: 'Failed to delete employee' });
+    }
+    res.status(200).send({ message: 'Employee deleted successfully' });
+  });
+});
+
+// PUT endpoint to update employee details
+app.put('/api/employees/:id', (req, res) => {
+  const employeeId = req.params.id;
+  const {
+    firstname,
+    lastname,
+    employeeId: newEmployeeId,
+    email,
+    phoneNumber,
+    department,
+    dateOfJoining,
+    role,
+  } = req.body;
+
+  // Check if employeeId or email already exists for another employee
+  const checkExistingQuery = `
+    SELECT * FROM employee_details WHERE (employeeId = ? OR email = ?) AND id != ?;
+  `;
+  db.query(checkExistingQuery, [newEmployeeId, email, employeeId], (err, result) => {
+    if (err) {
+      console.error("Error checking existing data:", err.message);
+      return res.status(500).json({ message: "Database error", error: err.message });
+    }
+
+    if (result.length > 0) {
+      return res.status(400).json({
+        message: "Employee ID or Email already exists for another employee.",
+      });
+    }
+
+    // Proceed with the update
+    const updateQuery = `
+      UPDATE employee_details
+      SET firstname = ?, lastname = ?, employeeId = ?, email = ?, phoneNumber = ?, department = ?, dateOfJoining = ?, role = ?
+      WHERE id = ?
+    `;
+    db.query(
+      updateQuery,
+      [firstname, lastname, newEmployeeId, email, phoneNumber, department, dateOfJoining, role, employeeId],
+      (err, result) => {
+        if (err) {
+          console.error("Error updating data:", err.message);
+          return res.status(500).json({ message: "Database error", error: err.message });
+        }
+        if (result.affectedRows === 0) {
+          return res.status(404).json({ message: "Employee not found" });
+        }
+        res.status(200).json({ message: "Employee updated successfully", data: result });
+      }
+    );
+  });
+});
+
 
 // Start the server
 app.listen(port, () => {
