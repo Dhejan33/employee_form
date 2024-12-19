@@ -56,7 +56,7 @@
         setErrors(validationErrors);
       } else {
         try {
-          const response = await fetch("http://localhost:5000/submit-form", {
+          const response = await fetch("https://employee-form-ue1a.onrender.com/submit-form", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
