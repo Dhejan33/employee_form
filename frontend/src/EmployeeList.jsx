@@ -23,7 +23,7 @@ function EmployeeList() {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/employees"); 
+        const response = await fetch("https://employee-form-backend-xyi9.onrender.com/api/employees"); 
         if (response.ok) {
           const data = await response.json();
           setEmployees(data); 
@@ -42,7 +42,7 @@ function EmployeeList() {
 
   const handleDelete = async (employeeId) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/employees/${employeeId}`, {
+      const response = await fetch(`https://employee-form-backend-xyi9.onrender.com/api/employees/${employeeId}`, {
         method: "DELETE", 
       });
 
