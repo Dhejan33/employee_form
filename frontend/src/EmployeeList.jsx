@@ -85,7 +85,7 @@ function EmployeeList() {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/employees/${updatedEmployee.id}`, {
+      const response = await fetch(`https://employee-form-backend-xyi9.onrender.com/api/employees/${updatedEmployee.id}`, {
         method: "PUT", 
         headers: {
           "Content-Type": "application/json"
