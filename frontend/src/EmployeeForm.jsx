@@ -55,7 +55,7 @@ function EmployeeForm() {
       setErrors(validationErrors);
     } else {
       try {
-        const response = await fetch("http://localhost:5000/submit-form", {
+        const response = await fetch("https://employee-form-backend-xyi9.onrender.com/submit-form", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
